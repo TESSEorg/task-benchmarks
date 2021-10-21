@@ -1,6 +1,6 @@
 if (TARGET ttg-parsec)
-  add_executable(chain-ttg "chain-ttg.cc")
-  target_link_libraries(chain-ttg ttg-parsec)
+  include(AddTTGExecutable)
+  add_ttg_executable(chain-ttg "chain-ttg.cc")
 endif (TARGET ttg-parsec)
 
 if (TARGET Taskflow::Taskflow)

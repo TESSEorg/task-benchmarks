@@ -2,4 +2,4 @@
 
 - configure: `cmake -S . -B build`
 - build: `cmake --build build`
-- run: `src/chain/chain-tf`, `src/chain/chain-ttg`, etc.
+- run: `build/src/chain/chain-tf`, `build/src/chain/chain-ttg-parsec`, `build/src/chain/chain-ttg-mad`, etc.

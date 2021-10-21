@@ -1,4 +1,4 @@
-#include "ttg/parsec/ttg.h"
+#include "ttg.h"
 
 #include <chrono>
 
