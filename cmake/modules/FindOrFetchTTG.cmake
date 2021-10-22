@@ -10,7 +10,7 @@ else (TARGET ttg)
   FetchContent_Declare(
       ttg
       GIT_REPOSITORY      https://github.com/TESSEorg/ttg.git
-      GIT_TAG             1b891110bc6c8e0d65a30d375ec24dc000d1eea5
+      GIT_TAG             9f20ec02af70cd414d7454596b06270f734eb134
   )
   FetchContent_MakeAvailable(ttg)
   FetchContent_GetProperties(ttg

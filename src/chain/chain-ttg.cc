@@ -16,30 +16,6 @@ inline int64_t duration_in_mus(time_point const &t0, time_point const &t1) {
   return std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0).count();
 }
 
-class Next : public TT<int, std::tuple<Out<int, void>, Out<void, int>>, Next, void> {
-  using baseT = TT<int, std::tuple<Out<int, void>, Out<void, int>>, Next, void>;
-
-public:
-  Next(const std::string &name) : baseT(name, {"inputA"}, {"resultA", "iterateA"}) {}
-
-  Next(const typename baseT::input_edges_type &inedges, const typename baseT::output_edges_type &outedges,
-       const std::string &name)
-      : baseT(inedges, outedges, name, {"next"}, {"next", "stop"}) {}
-
-  static constexpr const bool have_cuda_op = false;
-
-  void op(const int &key, baseT::output_terminals_type &outs) {
-    if (key < 10000000) {
-      ::sendk<0>(key+1, outs);
-    }
-    else {
-      ::sendv<1>(key, outs);
-    }
-  }
-
-  ~Next() { }
-};
-
 template <bool flow_taskid_as_values>
 auto make_ttg();
 
@@ -73,7 +49,14 @@ auto make_ttg<false>() {
 
   auto init = make_tt<void>([](std::tuple<Out<int, void>> &outs) { sendk<0>(0, outs); }, edges(), edges(I2N));
 
-  auto next = std::make_unique<Next>(edges(fuse(I2N, N2N)), edges(N2N, N2S), "");
+  auto next = make_tt([](const int& key, std::tuple<Out<int, void>, Out<void, int>> &outs) {
+    if (key < 10000000) {
+      ::sendk<0>(key+1, outs);
+    }
+    else {
+      ::sendv<1>(key, outs);
+    }
+  }, edges(fuse(I2N, N2N)), edges(N2N, N2S));
 
   auto stop = make_tt<void>([](const int &v, std::tuple<> &outs) { std::cout << "last task received v=" << v << std::endl; }, edges(N2S), edges());
 
