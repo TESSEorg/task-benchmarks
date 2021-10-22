@@ -1,7 +1,7 @@
-if (TARGET ttg-parsec)
+if (TARGET ttg)
   include(AddTTGExecutable)
   add_ttg_executable(chain-ttg "chain-ttg.cc")
-endif (TARGET ttg-parsec)
+endif (TARGET ttg)
 
 if (TARGET Taskflow::Taskflow)
   add_executable(chain-tf "chain-tf.cc")
