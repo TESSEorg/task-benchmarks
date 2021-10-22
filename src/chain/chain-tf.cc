@@ -14,6 +14,8 @@ inline int64_t duration_in_mus(time_point const &t0, time_point const &t1) {
   return std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0).count();
 }
 
+std::atomic<int> task_counter = 0;
+
 int main(){
   
   tf::Executor executor;
@@ -21,11 +23,10 @@ int main(){
 
   auto t0 = now();
 
-  tf::Task init = taskflow.emplace([](){}).name("init");
-  tf::Task stop = taskflow.emplace([](){}).name("stop");
+  tf::Task init = taskflow.emplace([](){++task_counter;}).name("init");
+  tf::Task stop = taskflow.emplace([](){++task_counter;}).name("stop");
 
   int N = 10000000;
-  std::atomic<int> task_counter = 0;
 
 #ifdef USE_CONDITIONAL_TASK
   // creates a task that increments a counter until target value
@@ -44,7 +45,7 @@ int main(){
   tf::Task prev = std::move(next);
   for(int t=1; t!=N; ++t) {
     tf::Task next = taskflow.emplace(
-        [&](){ ++task_counter;}
+        [&](){ ++task_counter; }
     );
     prev.precede(next);
     prev = std::move(next);
@@ -54,8 +55,8 @@ int main(){
 
   executor.run(taskflow).wait();
   auto t1 = now();
+  std::cout << "# of tasks = " << task_counter.load() << std::endl;
   std::cout << "time elapsed (microseconds) = " << duration_in_mus(t0, t1) << std::endl;
-  std::cout << "task_counter = " << task_counter << std::endl;
 
   return 0;
 }
