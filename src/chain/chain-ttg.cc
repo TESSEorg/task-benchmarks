@@ -41,6 +41,11 @@ auto make_ttg<true>() {
 
   auto stop = make_tt<void>([](const int &, std::tuple<> &outs) { ++task_counter; }, edges(N2S), edges());
 
+  auto rank = ttg_default_execution_context().rank();
+  init->set_keymap([rank](void){ return rank; });
+  next->set_keymap([rank](const int& key){ return rank; });
+  stop->set_keymap([rank](void){ return rank; });
+
   return std::make_tuple(std::move(init), std::move(next), std::move(stop));
 }
 
@@ -49,6 +54,8 @@ template <>
 auto make_ttg<false>() {
   Edge<int, void> I2N, N2N;
   Edge<void, int> N2S;
+
+  auto rank = ttg_default_execution_context().rank();
 
   auto init = make_tt<void>([](std::tuple<Out<int, void>> &outs) { sendk<0>(0, outs); }, edges(), edges(I2N));
 
@@ -62,6 +69,10 @@ auto make_ttg<false>() {
   }, edges(fuse(I2N, N2N)), edges(N2N, N2S));
 
   auto stop = make_tt<void>([](const int &v, std::tuple<> &outs) { std::cout << "last task received v=" << v << std::endl; }, edges(N2S), edges());
+
+  init->set_keymap([rank](void){ return rank; });
+  next->set_keymap([rank](const int& key){ return rank; });
+  stop->set_keymap([rank](void){ return rank; });
 
   return std::make_tuple(std::move(init), std::move(next), std::move(stop));
 }

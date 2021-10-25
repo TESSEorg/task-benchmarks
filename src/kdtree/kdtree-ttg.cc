@@ -23,6 +23,8 @@ inline int64_t duration_in_mus(time_point const &t0, time_point const &t1) {
 auto make_ttg() {
   Edge<Idx, void> I2D, D2D;
 
+  auto rank = ttg_default_execution_context().rank();
+
   auto init = make_tt<void>([](std::tuple<Out<Idx, void>> &outs) { ++task_counter; sendk<0>(Idx{}, outs); }, edges(), edges(I2D));
 
   auto down = make_tt([](const Idx& idx, std::tuple<Out<Idx, void>> &outs) {
@@ -32,6 +34,9 @@ auto make_ttg() {
       ::sendk<0>(Idx(idx.l+1, {{idx.x[0]*2+1}}), outs);
     }
   }, edges(fuse(I2D, D2D)), edges(D2D));
+
+  init->set_keymap([rank](){ return rank; });
+  down->set_keymap([rank](const Idx& idx){ return rank; });
 
   return std::make_tuple(std::move(init), std::move(down));
 }
