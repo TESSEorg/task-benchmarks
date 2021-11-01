@@ -8,5 +8,7 @@ set(BUILD_TESTING OFF CACHE BOOL "Whether to build tests in this project and its
 include(FindOrFetchTaskflow)
 include(FindOrFetchTTG)
 
+find_package(OpenMP)
+
 add_subdirectory(src)
 
