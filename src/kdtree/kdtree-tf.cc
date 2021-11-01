@@ -32,9 +32,14 @@ struct NodeOp {
   }
 };
 
-int main(){
-  
-  tf::Executor executor;
+int main(int argc, char *argv[]){
+
+  int nt = std::thread::hardware_concurrency();
+  if (argc > 1) {
+    nt = std::atoi(argv[1]);
+  }
+
+  tf::Executor executor(nt);
   tf::Taskflow taskflow;
 
   auto t0 = now();
