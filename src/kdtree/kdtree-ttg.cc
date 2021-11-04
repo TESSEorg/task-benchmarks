@@ -1,24 +1,12 @@
 #include "ttg.h"
 
-#include <chrono>
-
 #include "idx.h"
+
+#include "../util/chrono.h"
 
 std::atomic<int> task_counter = 0;
 
 using namespace ttg;
-
-using time_point = std::chrono::high_resolution_clock::time_point;
-
-inline time_point now() { return std::chrono::high_resolution_clock::now(); }
-
-inline std::chrono::system_clock::time_point system_now() {
-  return std::chrono::system_clock::now();
-}
-
-inline int64_t duration_in_mus(time_point const &t0, time_point const &t1) {
-  return std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0).count();
-}
 
 auto make_ttg() {
   Edge<Idx, void> I2D, D2D;
@@ -40,9 +28,6 @@ int main(int argc, char* argv[]) {
 
   ttg_initialize(argc, argv, -1);
 
-  // change to true to flow task ids as values, this stresses the cost of managing data copies
-  // default (false) uses task ids as usual (as "keys"), this avoids the need for data copy management
-  constexpr bool flow_taskid_as_values = false;
   auto [init, down] = make_ttg();
 
   auto connected = make_graph_executable(init.get());
