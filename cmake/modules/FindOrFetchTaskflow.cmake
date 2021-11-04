@@ -1,5 +1,7 @@
 if (NOT TARGET Taskflow::Taskflow)
-  find_package(Taskflow CONFIG)
+  # Taskflow registers its build tree with the package registry, which inhibits
+  # portability of the build tree to a different machine (i.e. FETCHCONTENT_FULLY_DISCONNECTED=ON)
+  find_package(Taskflow CONFIG NO_CMAKE_PACKAGE_REGISTRY)
 endif(NOT TARGET Taskflow::Taskflow)
 
 if (TARGET Taskflow::Taskflow)
