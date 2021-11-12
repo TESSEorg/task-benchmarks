@@ -21,8 +21,16 @@ struct Idx {
   }
   Idx(int l, const std::array<int, NDIM>& x) noexcept : l(l), x(x) {}
 
-  bool operator==(const Idx& other) { return l == other.l && x == other.x; }
+  bool operator==(const Idx& other) const { return l == other.l && x == other.x; }
 };
+
+namespace madness::archive {
+template <class Archive> struct ArchiveSerializeImpl<Archive, Idx> {
+  static inline void serialize(const Archive &ar, Idx &obj) {
+    ar &obj.l &obj.x;
+  };
+};
+}
 
 std::ostream& operator<<(std::ostream& os, const Idx& idx) {
   os << "[" << idx.l << " {" << idx.x[0] << "} ]";
