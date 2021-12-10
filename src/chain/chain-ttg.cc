@@ -56,7 +56,12 @@ auto make_ttg<false>() {
 
 int main(int argc, char* argv[]) {
 
-  ttg_initialize(argc, argv, -1);
+  int nt = 1;
+  if (argc > 1) {
+    nt = std::atoi(argv[1]);
+  }
+
+  ttg_initialize(argc, argv, nt);
 
   // change to true to flow task ids as values, this stresses the cost of managing data copies
   // default (false) uses task ids as usual (as "keys"), this avoids the need for data copy management

@@ -26,7 +26,12 @@ auto make_ttg() {
 
 int main(int argc, char* argv[]) {
 
-  ttg_initialize(argc, argv, -1);
+  int nt = -1;
+  if (argc > 1) {
+    nt = std::atoi(argv[1]);
+  }
+
+  ttg_initialize(argc, argv, nt);
 
   auto [init, down] = make_ttg();
 

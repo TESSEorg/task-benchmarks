@@ -4,9 +4,13 @@
 
 std::atomic<int> task_counter = 0;
 
-int main(){
+int main(int argc, char *argv[]){
+  int nt = 1;
+  if (argc > 1) {
+    nt = std::atoi(argv[1]);
+  }
   
-  tf::Executor executor;
+  tf::Executor executor(nt);
   tf::Taskflow taskflow;
 
   auto t0 = now();
